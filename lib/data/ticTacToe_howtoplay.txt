@@ -1,0 +1,45 @@
+How to Play Tic-Tac-Toe
+Tic-tac-toe is a simple, two-player game that, if played optimally by both players,
+will always result in a tie. The game is also called noughts and crosses or Xs and Os.
+
+Tic-tac-toe is a game that is traditionally played by being drawn on paper.
+
+History of Tic-Tac-Toe
+An early variation of the game was played in the Roman Empire, around the 1st century B.C.
+It was called "terni lapilli," which means "three pebbles at a time."
+The game's grid markings have been found chalked all over Roman ruins. Evidence of the
+game was also found in ancient Egyptian ruins.
+
+The first print reference to "noughts and crosses," the British name for the game,
+appeared in 1864. The first print reference to a game called "tick-tack-toe" occurred in
+1884 but referred to a children's game played on a slate.
+
+More Advanced Tic-Tac-Toe
+A relatively simple game usually played on a grid of 3-by-3 squares, tic-tac-toe is mainly
+enjoyed by children. Tic-tac-toe can be made significantly more complex by increasing the size
+of the board to 4-by-4, 5-by-5, or even up to a 20-by-20 grid.
+
+advanced tic tac toe
+The goal of tic-tac-toe is to be the first player to get three in a row on a 3-by-3 grid or
+four in a row in a 4-by-4 grid, etc..
+
+To start, one player draws a board, creating a grid of squares, usually 3-by-3 or 4-by-4.
+
+In a 3-by-3 grid game, the player who is playing "X" always goes first. Players alternate placing
+Xs and Os on the board until either player has three in a row, horizontally, vertically, or
+diagonally or until all squares on the grid are filled. If a player is able to draw three Xs or
+three Os in a row, then that player wins. If all squares are filled and neither player has made
+a complete row of Xs or Os, then the game is a draw.
+
+One of the game's best strategies involves creating a "fork," which is placing your mark in such a way that you have the opportunity to win two ways on your next turn. Your opponent can only block one, thereby, you can win after that.
+
+The gameplay is the same if you are playing on a 4-by-4 grid. The "X" player goes first. And, players alternate placing Xs and Os on the board until a row is completed horizontally, vertically, or diagonally, or all 16 squares are filled. If all 16 squares are filled and neither player has four in a row, the game is a draw.
+
+Other Variants
+Tic-tac-toe can be also be played on a 5-by-5 grid with each player trying to get five in a row.
+
+The game can also be played on larger grids, such as 10-by-10 or even 20-by-20.
+For any grid of 6-by-6 or greater, it might be best to make your goal to get five in a row.
+This turns the basic game of tic-tac-toe into a much more complex game with similarities to
+the board game Pente, meaning "five" in Greek. Similarly, the goal of Pente is for a player
+to score five marks in a row.
