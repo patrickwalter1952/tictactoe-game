@@ -6,7 +6,7 @@ Tic-Tac-Toe is a simple game for single or multi-players or play against the com
 For single player you would just play against yourself, mainly for practice.
 When playing against the computer, you are the "X" player and the computer is the "O" player.
 When playing against another player remotely, you sign in with your name and contact another player who has previously or currently signed in. You will contact your opponent via text message.  You will initialize and start your game as the "X" player. Your opponent will be the "O" player.
-You, player "X", always goes first. Players alternate placing Xs and Os on the board until either player has filled a row, horizontally, vertically, or diagonally or until all squares on the grid are filled. If a player is able to draw all Xs or all Os in a row or diagonal, then that player wins. If all squares are filled and neither player has made a complete row of Xs or Os, then the game is a draw.
+You, player "X", always goes first. Players alternate placing Xs and Os on the board until either player has filled a row, horizontally, vertically, or diagonally or until all squares on the grid are filled. If a player is able to draw all Xs or all Os in a row, then that player wins. If all squares are filled and neither player has made a complete row of Xs or Os, then the game is a draw.
 
 =============================================
 How to Play Tic-Tac-Toe
