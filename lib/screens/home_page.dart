@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 60),
 
             const Image(
-              image: AssetImage('assets/images/TicTacToe2.png'),
+              image: AssetImage('assets/images/TicTacToe.png'),
             ),
 
             const SizedBox(height: 20),
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                 },
 
                 child: const Text(
-                  "Multi User Mode",
+                  "Multi Player Mode",
                   style: TextStyle(fontSize: 20),
                 ),
               ),

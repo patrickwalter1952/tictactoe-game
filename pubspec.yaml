@@ -32,9 +32,9 @@ dependencies:
     sdk: flutter
 
   regexpattern:
-  #  firebase_core:
-  #  firebase_auth:
-  #  firebase_database:
+  firebase_core:
+#  firebase_auth:
+#  firebase_database:
   intl:
   flutter_email_sender:
   email_validator:
@@ -60,22 +60,22 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 ####- make sure to run in terminal:  flutter pub run flutter_launcher_icons:main
-#flutter_launcher_icons:
-#  android: true
-#  ios: true
-#  image_path: "assets/images/tictactoe_icon3.png"
-#  min_sdk_android: 21 # android min sdk min:16, default 21
-#  web:
-#    generate: true
-#    image_path: "assets/images/tictactoe_icon.png"
-#    background_color: "0xFFFFFF"
-#  windows:
-#    generate: true
-#    image_path: "assets/images/TicTacToe.png"
-#    icon_size: 48 # min:48, max:256, default: 48
-#  macos:
-#    generate: true
-#    image_path: "assets/images/TicTacToe.png"
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/ic_launcher.png"
+    background_color: "0xFFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/images/ic_launcher.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/ic_launcher.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

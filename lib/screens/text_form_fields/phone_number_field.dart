@@ -32,12 +32,10 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   @override
   void initState() {
     super.initState();
-    _errorText = widget.errorText;
   }
 
   Widget build(BuildContext context) {
     return TextFormField(
-      // initialValue:  widget.initialValue.toString(),
       controller: widget.editingController,
       onChanged: (value) {
         setState(() {
@@ -54,6 +52,8 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         return _errorText;
       },
 
+      style: const TextStyle(fontSize: 20),
+
       maxLength: widget.maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
 
@@ -61,6 +61,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       decoration: InputDecoration(
         enabled: widget.isEnabled,
         labelText: widget.fieldLabel,
+
         // An empty helperText makes it so the filed does not
         // grow in height when an error is displayed
         helperText: "",

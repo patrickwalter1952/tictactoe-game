@@ -1,11 +1,16 @@
 
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tictactoe_game/models/player.dart';
 import 'package:tictactoe_game/screens/player_waiting_page.dart';
+import 'package:tictactoe_game/screens/text_form_fields/phone_number_field.dart';
 import 'package:tictactoe_game/screens/text_form_fields/text_entry_field.dart';
 import 'package:tictactoe_game/services/database/database_service.dart';
 
 import '../main.dart';
+import '../models/tictactoe_model.dart';
 import '../services/utils.dart';
 
 class SignInPage extends StatefulWidget {
@@ -19,24 +24,28 @@ class _SignInPageState extends State<SignInPage> {
 
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  // final emailController = TextEditingController();
-  // final phoneNumberController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+
+  TicTacToe ticTacToe = TicTacToe(
+    games: [],
+    players: [],
+  );
 
 
   @override
   void dispose() {
     super.dispose();
     nameController.dispose();
-    // emailController.dispose();
-    // phoneNumberController.dispose();
+    phoneNumberController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Multi User Sign In'),
+        title: const Text('Multi Player Sign In'),
         centerTitle: true,
       ),
 
@@ -48,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
           children: <Widget> [
 
             const Image(
-              image: AssetImage('assets/images/TicTacToe2.png'),
+              image: AssetImage('assets/images/TicTacToe.png'),
             ),
 
             const SizedBox(height: 10),
@@ -62,12 +71,13 @@ class _SignInPageState extends State<SignInPage> {
             const SizedBox(height: 32),
 
             const Text(
-              'Select Your Name or \nCreate New Name',
+              'Select Your Name From List\n or Create New Name',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
             ),
 
-            playerListSelection(),
+            // playerListSelection(),
+            playerListContainer(),
 
             const SizedBox(height: 4),
 
@@ -75,30 +85,21 @@ class _SignInPageState extends State<SignInPage> {
               editingController: nameController,
               fieldLabel: 'Enter Name',
               onChanged: (value) {
-                print("Name value = $value");
+                // print("Name value = $value");
               },
+              errorText: "Field must be valued",
             ),
 
-            // PhoneNumberField(
-            //   fieldLabel: "Mobile Phone Number",
-            //   hintText: "",
-            //   onChanged: (value) {
-            //     setState(() {
-            //
-            //     });
-            //   },
-            //   editingController: phoneNumberController,
-            //   errorText: "Enter a valid Phone Number.",
-            //
-            // ),
-            //
-            // EmailField(
-            //   editingController: emailController,
-            //   fieldLabel: 'Enter Email',
-            //   onChanged: (value) {
-            //     print("Email value = $value");
-            //   },
-            // ),
+            PhoneNumberField(
+              fieldLabel: "Mobile Phone Number",
+              hintText: "",
+              onChanged: (value) {
+                // print("Phone Number value = $value");
+              },
+              editingController: phoneNumberController,
+              errorText: "Enter a valid Phone Number.",
+
+            ),
 
             SizedBox(
               child: ElevatedButton(
@@ -122,12 +123,7 @@ class _SignInPageState extends State<SignInPage> {
                     return;
                   }
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) =>
-                      PlayerWaitingPage(currentPlayer: player)
-                    )
-                  );
+                  navigateToNextPage(player);
                 },
 
                 child: const Text(
@@ -144,6 +140,15 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  void navigateToNextPage(Player player) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) =>
+            PlayerWaitingPage(currentPlayer: player)
+        )
+    );
+  }
+
   ///
   /// hide keyboard
   ///
@@ -155,20 +160,23 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<Player?> validateAndGetPlayer() async {
-    print("Name: ${nameController.text}");
-    // print("PHONE NUMBER: ${phoneNumberController.text}");
-    // print("EMAIL: ${emailController.text}");
+    print("Validate: Name: ${nameController.text} "
+        "PHONE NUMBER: ${phoneNumberController.text}");
 
     if (nameController.text.isEmpty) {
       Utils.showSnackBarMessage(context, "PLAYER Name must be valued", true);
       return null;
     }
 
+    if (phoneNumberController.text.isEmpty) {
+      Utils.showSnackBarMessage(context, "PLAYER Phone Number must be valued", true);
+      return null;
+    }
+
     Player? player = Player(
         playerID: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: nameController.text);
-        // email: emailController.text,
-        // phoneNumber: phoneNumberController.text);
+        name: nameController.text,
+        phoneNumber: phoneNumberController.text);
 
     player = await DatabaseService.insertIfPlayerNotExist(player);
 
@@ -188,56 +196,102 @@ class _SignInPageState extends State<SignInPage> {
 
         margin: const EdgeInsets.all(14),
 
-        child: StreamBuilder<List<Player>>(
-          stream: DatabaseService.getAllPlayers(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Something went wrong! ${snapshot.error}");
-            } else if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              List<Player> players = snapshot.data!;
-              return Container(
-                padding: const EdgeInsets.all(4.0),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: nameController.text.isEmpty ? null : nameController.text,
-                    iconSize: 28,
-
-                    icon: const Icon(Icons.arrow_downward),
-
-                    isExpanded: true,
-                    elevation: 12,
-
-                    style: const TextStyle(
-                      color: Colors.deepPurple,
-                      fontSize: 20,
-                      fontWeight: FontWeight.normal,
-                    ),
-
-                    onChanged: (String? value) {
-                      // This is called when the user selects an item.
-                      setState(() {
-                        //print('Selected Item: $value');
-                        nameController.text = value!;
-                      });
-                    },
-
-                    items: players.map<DropdownMenuItem<String>>((Player player) {
-                      return DropdownMenuItem<String>(
-                        value: player.name,
-                        child: Text(player.name),
-                      );
-                      }).toList(),
-
-                    ),
-                  ),
-                );
-              }
-            },
-        ),
-
+        child: playerListContainer(),
     );
   }
 
+  ///
+  /// container for showing the current list of Games with status
+  Widget playerListContainer() {
+    final scrollController = ScrollController();
+    return Container(
+      height: 140,
+      width: 340,
+      margin: const EdgeInsets.all(2.0),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(12.0),
+        color: Colors.cyan,
+      ),
+
+      child: ScrollConfiguration(
+        behavior: _ScrollbarBehavior(),
+
+        child: StreamBuilder(
+          stream: DatabaseService.getAllPlayers(),
+
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("Something went wrong! ${snapshot.error}");
+            } else if (snapshot.hasData) {
+              final players = snapshot.data!;
+
+              return ListView.separated(
+                controller: scrollController,
+                shrinkWrap: true,
+
+                separatorBuilder: (_, __) => const Divider(
+                  height: 2,
+                  thickness: 2,
+                ),
+
+                // padding: const EdgeInsets.symmetric(vertical: 0.0),
+                itemCount: players.length,
+
+                itemBuilder: (BuildContext context, int index) {
+                  final player = players[index];
+                  if (index == 0) {
+                    ticTacToe.resetPlayers();
+                  }
+                  ticTacToe.addPlayer(player);
+                  return buildPlayerTile(player, index);
+                },
+
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  ///
+  /// build & display the player tile
+  Widget buildPlayerTile(Player player, int index) {
+    return ListTile(
+      title: Text(
+        "${player.name} \n${player.phoneNumber}",
+        style: const TextStyle(
+          fontSize: 18.0,
+          decoration: TextDecoration.none,
+        ),
+      ),
+
+      //select any player opponent but current player
+      onTap: () {
+        setState(() {
+          nameController.text = player.name;
+          phoneNumberController.text = player.phoneNumber;
+        });
+      },
+    );
+  }
+}
+
+///
+///
+class _ScrollbarBehavior extends ScrollBehavior {
+  @override
+  Widget buildScrollbar(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return Scrollbar(
+      controller: details.controller,
+      thickness: 6.0,
+      thumbVisibility: true,
+      trackVisibility: true,
+      child: child,
+    );
+  }
 }

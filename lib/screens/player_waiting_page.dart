@@ -11,10 +11,7 @@ import '../services/database/database_service.dart';
 import '../services/utils.dart';
 
 class PlayerWaitingPage extends StatefulWidget {
-  PlayerWaitingPage({
-    super.key,
-    required this.currentPlayer
-  });
+  PlayerWaitingPage({super.key, required this.currentPlayer});
 
   Player currentPlayer;
 
@@ -25,11 +22,10 @@ class PlayerWaitingPage extends StatefulWidget {
   late int selectedGameIndex = -1;
   late Game selectedGame;
   String selectedGameID = "";
-  bool isSelectedGame = false;
 
   TicTacToe ticTacToe = TicTacToe(
-      games: [],
-      players: [],
+    games: [],
+    players: [],
   );
 
   @override
@@ -37,19 +33,20 @@ class PlayerWaitingPage extends StatefulWidget {
 }
 
 class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
-
   @override
   void initState() {
     super.initState();
-  }
 
+    print("CURRENT PLAYER: ${widget.currentPlayer.toString()}");
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Multiplayer - Player Status'),
+        title: const Text('Multi Player - Game Setup'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -57,34 +54,26 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             const Text(
-              "Existing Player To Contact\nPut Your Name in Waiting List",
+              "Existing Players To Contact",
               style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
             ),
-
             Expanded(child: playerListContainer()),
-
-            const Text(
-              "Waiting List - Select Opponent",
-              style: TextStyle(fontSize: 20),
-            ),
-
-            Expanded(child: playerWaitingListContainer()),
-
             Text(
               "Game Status for ${widget.currentPlayer.name}",
               style: const TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
             ),
-
+            const Text(
+              "Initialize And/Or Select Game Then\nSelect Opponent From List Above",
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
             Expanded(child: gameListContainer()),
-
             const SizedBox(height: 8),
-
             createInitializeGameButton(),
-
             const SizedBox(height: 8),
-
             createStartGameButton(),
-
           ],
         ),
       ),
@@ -105,10 +94,11 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
         ),
         onPressed: () async {
           Game game = Game.initializeGame(widget.currentPlayer);
-          widget.selectedGameID = game.gameID;
+          // widget.selectedGameID = game.gameID;
           await DatabaseService.insertIfGameNotExist(game);
         },
-        child: Text("Initialize Game with Player: ${widget.currentPlayer.name}"),
+        child:
+            Text("Initialize Game with Player: ${widget.currentPlayer.name}"),
       ),
     );
   }
@@ -126,60 +116,37 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
           ),
         ),
         onPressed: () async {
-             if (!widget.isSelectedGame || widget.selectedGame.playerO.isEmpty ||
-              widget.selectedGame.playerX.isEmpty) {
+          if (widget.selectedGameID.isEmpty ||
+              widget.selectedGame.playerOName.isEmpty ||
+              widget.selectedGame.playerXName.isEmpty) {
             Utils.buildShowDialog(
                 context,
-                "Game Must be initialized",
+                "Game Must be initialized and Selected",
                 "Game must be selected with both Player X and Player O valued.",
                 true);
             return;
           }
 
-          widget.selectedGame = widget.selectedGame.copyWith(
-            date: Utils.dateFormat.format(DateTime.now()),
-            gameStatus: GameStatus.ACTIVE.status,
-            selectedBoardID: BoardID.BoardID_8X8.id,
-            action: GameAction.NO_ACTION.action,
-            tappedIndex: -1,
-          );
-          await DatabaseService.updateGame(widget.selectedGame);
+          //Player X will update the selected game
+          if (widget.currentPlayer.playerID == widget.selectedGame.playerXID) {
+            widget.selectedGame = widget.selectedGame.copyWith(
+              date: Utils.dateFormat.format(DateTime.now()),
+              gameStatus: GameStatus.ACTIVE.status,
+              selectedBoardID: BoardID.BoardID_8X8.id,
+              action: GameAction.NO_ACTION.action,
+              tappedIndex: -1,
+              activePlayerID: widget.selectedGame.playerXID,
+              playerOScore: 0,
+              playerXScore: 0,
+            );
+            await DatabaseService.updateGame(widget.selectedGame);
+          }
 
-          String? playerOName = widget.ticTacToe.getPlayer(widget.selectedGame.playerO)?.name;
-          String? playerXName = widget.ticTacToe.getPlayer(widget.selectedGame.playerX)?.name;
-          // print("GET PLAYER X  -- [$playerXName]  PLAYER O  -- [$playerOName]");
+          //navigate to the game page
+          navigateToPage();
 
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => TicTacToeHomePage(
-                playerXName: playerXName as String,
-                playerOName: playerOName as String,
-                selectedGame: widget.selectedGame,
-                currentPlayer: widget.currentPlayer,
-              ))
-          ).then((_) async {
-            // get callback after coming back from NextPage()
-            int totWins = widget.currentPlayer.totalWins;
-            int totLosses = widget.currentPlayer.totalLosses;
-
-            widget.selectedGame = (await DatabaseService.findGame(widget.selectedGame.gameID))!;
-            print("CALLED BACK GAME FROM DB.... ${widget.selectedGame.toString()}");
-
-            if (widget.selectedGame.playerO == widget.currentPlayer.playerID) {
-              widget.currentPlayer = widget.currentPlayer.copyWith(
-                totalWins: totWins + widget.selectedGame.playerOScore,
-                totalLosses: totLosses + widget.selectedGame.playerXScore,
-              );
-            } else {
-              widget.currentPlayer = widget.currentPlayer.copyWith(
-                totalWins: totWins + widget.selectedGame.playerXScore,
-                totalLosses: totLosses + widget.selectedGame.playerOScore,
-              );
-            }
-            print("CALLED BACK PLAYER.... ${widget.currentPlayer.toString()}");
-            DatabaseService.updatePlayer(widget.currentPlayer);
-          });
         },
+
         child: const Text("Start Tic Tac Toe Game"),
       ),
     );
@@ -223,53 +190,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
                   }
 
                   widget.ticTacToe.addPlayer(player);
-                  return buildPlayerTile(player);
-                },
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-
-  ///
-  /// container for showing the current list of players waiting to play game
-  Widget playerWaitingListContainer() {
-    final scrollController = ScrollController();
-    return Container(
-      height: 140,
-      width: 340,
-      margin: const EdgeInsets.all(2.0),
-      decoration: BoxDecoration(
-        border: Border.all(),
-        borderRadius: BorderRadius.circular(12.0),
-        color: Colors.orange,
-      ),
-      child: ScrollConfiguration(
-        behavior: _ScrollbarBehavior(),
-        child: StreamBuilder(
-          stream: DatabaseService.getAllPlayersWaiting(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Something went wrong! ${snapshot.error}");
-            } else if (snapshot.hasData) {
-              final players = snapshot.data!;
-              return ListView.separated(
-                controller: scrollController,
-                shrinkWrap: true,
-                separatorBuilder: (_, __) => const Divider(
-                  height: 2,
-                  thickness: 4,
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                itemCount: players.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final player = players[index];
-                  return buildPlayerWaitingTile(player, index);
+                  return buildPlayerTile(player, index);
                 },
               );
             } else {
@@ -292,7 +213,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
       decoration: BoxDecoration(
         border: Border.all(),
         borderRadius: BorderRadius.circular(12.0),
-        color: Colors.yellow,
+        color: Colors.cyan,
       ),
       child: ScrollConfiguration(
         behavior: _ScrollbarBehavior(),
@@ -315,10 +236,8 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
                 itemBuilder: (BuildContext context, int index) {
                   final game = games[index];
                   // print("ITEMBUILDER-- GAME ${game.toString()}");
-                  // print("[" + widget.currentPlayer.playerID + "] == [" +
-                  //     game.playerX + "]  ||  [" +
-                  //     widget.currentPlayer.playerID + "] == [" + game.playerO +
-                  //     "] ");
+                  // print("[${widget.currentPlayer.playerID}] == [${game.playerXID}]  "
+                  //     "||  [${widget.currentPlayer.playerID}] == [${game.playerOID}] ");
                   if (index == 0) {
                     widget.ticTacToe.resetGames();
                   }
@@ -337,183 +256,215 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
 
   ///
   /// build & display the player tile
-  Widget buildPlayerTile(Player player) {
-    return ListTile(
-      leading: IconButton(
-        icon: const Icon(Icons.phone_android),
-        color: Colors.black,
+  Widget buildPlayerTile(Player player, int index) {
+    return Container(
+      color: player.name == widget.currentPlayer.name
+          ? Colors.white70
+          : Colors.transparent,
+      child: ListTile(
+        leading: IconButton(
+            icon: const Icon(Icons.phone_android),
+            color: Colors.black,
+            onPressed: () async {
+              TextEditingController phoneController =
+                  TextEditingController(text: player.phoneNumber);
+              String result = await Utils.buildShowPhoneTextFieldDialog(
+                  context,
+                  "Enter Phone Number to Text ${player.name}",
+                  "Invalid Phone Number",
+                  phoneController.text.isValidPhoneNumber,
+                  phoneController);
 
-        onPressed: () async {
-          TextEditingController phoneController =
-            TextEditingController(text: player.phoneNumber);
-          String result =
-            await Utils.buildShowPhoneTextFieldDialog(
-                context,
-                "Enter Phone Number to Text",
-                "Invalid Phone Number",
-                phoneController.text.isValidPhoneNumber,
-                phoneController);
+              if (result.toUpperCase() == "OK") {
+                String msg = "Tic Tac Toe Player:\n "
+                    "${widget.currentPlayer.name} has challenged you with a game."
+                    " After signing in, join game between \n"
+                    "${widget.currentPlayer.name} and  ${player.name}";
+                try {
+                  Utils.send_SMS2(msg, [phoneController.text]);
+                } catch (e) {
+                  showMessage("SEND PHONE TEXT MESSAGE ERROR: $e", true);
+                }
+              }
+            }),
 
-          if (result.toUpperCase() == "OK") {
-            String msg = "Tic Tac Toe Player:\n "
-                "${widget.currentPlayer.name} has challenged you with a game."
-                " After signing in, join game between \n"
-                "${widget.currentPlayer.name} and  ${player.name}";
-            try {
-              Utils.send_SMS2(msg, [phoneController.text]);
-            } catch (e) {
-              Utils.showSnackBarMessage(context,
-                  "SEND PHONE TEXT MESSAGE ERROR: $e", true);
-              // print("SEND PHONE TEXT MESSAGE ERROR: $e");
-            }
-          }
-        }
-      ),
-
-      title: Text(
-        player.tilePlayerInfo(),
-        style: const TextStyle(
-          fontSize: 16.0,
-          decoration: TextDecoration.none,
-        ),
-      ),
-
-      trailing: widget.currentPlayer.name == player.name ? IconButton(
-        icon: const Icon(Icons.delete),
-        color: Colors.redAccent,
-        onPressed: () {
-          String result = DatabaseService.deletePlayer(player);
-        },
-      ) : null,
-
-      onTap: widget.currentPlayer.name == player.name ? () {
-            Player changePlayer =
-            player.copyWith(playerStatus: GameStatus.WAITING.status);
-            DatabaseService.updatePlayer(changePlayer);
-          } : null,
-    );
-  }
-
-    ///
-    /// build & display the WAITING player tile
-    Widget buildPlayerWaitingTile(Player player, int index) {
-      return Container (
-        color: widget.isSelectedOpponent && widget.selectedWaitIndex == index
-            ? Colors.white70 : Colors.transparent,
-        child: ListTile(
-          title: Text(
-            player.tilePlayerInfo(),
-            style: const TextStyle(
-              fontSize: 16.0,
-              decoration: TextDecoration.none,
-            ),
-          ),
-
-          trailing: widget.currentPlayer.name == player.name
-            ? IconButton(
-                icon: const Icon(Icons.dangerous_outlined),
-                color: Colors.redAccent,
-                onPressed: () {
-                  Player changePlayer =
-                          player.copyWith(playerStatus: GameStatus.INACTIVE.status);
-                  DatabaseService.updatePlayer(changePlayer);
-                },
-            )
-            : null,
-
-          onLongPress: () {
-            print("SELECTED PLAYER WAITING: ${player.toString()}");
-            setState(() {
-              widget.selectedOpponent = player;
-              widget.isSelectedOpponent = true;
-              widget.selectedWaitIndex = index;
-            });
-          },
-
-          onTap: () {
-            setState(() {
-              widget.isSelectedOpponent = false;
-              widget.selectedWaitIndex = -1;
-            });
-          },
-        ),
-      );
-    }
-
-    ///
-    /// build & display the player tile
-    Widget buildGameTile(Game game, int index) => Container(
-      color: widget.isSelectedGame && widget.selectedGameIndex == index
-          ? Colors.white70 : Colors.transparent,
-      child: widget.currentPlayer.playerID == game.playerX ||
-          widget.currentPlayer.playerID == game.playerO ? ListTile(
         title: Text(
-          widget.ticTacToe.getGameTile(game,
-              widget.currentPlayer.name,
-              widget.isSelectedOpponent ? widget.selectedOpponent.name : ""),
+          player.tilePlayerInfo(),
           style: const TextStyle(
             fontSize: 16.0,
             decoration: TextDecoration.none,
           ),
         ),
 
-        trailing: widget.currentPlayer.playerID == game.playerX ?
-        IconButton(
-          icon: const Icon(Icons.delete),
-          color: Colors.redAccent,
+        trailing: widget.currentPlayer.name == player.name
+            ? IconButton(
+                icon: const Icon(Icons.delete),
+                color: Colors.redAccent,
+                onPressed: () {
+                  String result = DatabaseService.deletePlayer(player);
+                },
+              )
+            : null,
 
-          onPressed: () {
-            String result = DatabaseService.deleteGame(game);
-          },
-        ) : null ,
+        //select any player opponent but current player
+        onLongPress: widget.currentPlayer.name != player.name
+          ? () async {
+              if (widget.selectedGameID.isEmpty) {
+                showDialog("Select Game First",
+                    "Game must be selected before selecting opponent.", true);
+                return;
+              }
+              setState(() {
+                widget.selectedOpponent = player;
+                widget.isSelectedOpponent = true;
+                widget.selectedWaitIndex = index;
+              });
 
-        onLongPress: () async {
-          print("SELECTED GAME: ${game.toString()}");
-          if (widget.isSelectedOpponent) {
-            widget.selectedGame = game.copyWith(
-                playerO: widget.selectedOpponent.playerID);
-            await DatabaseService.updateGame(widget.selectedGame);
-
-          } else {
-            widget.selectedGame = game.copyWith();
-            await DatabaseService.updateGame(widget.selectedGame);
-          }
-
-          if (widget.selectedGame.playerO.isEmpty) {
-            Utils.buildShowDialog(
-                context,
-                "Game Must be initialized",
-                "Game requires a selected opponent Player From Waiting List.",
-                true);
-            return;
-          }
-
-          setState(() {
-            widget.isSelectedGame = true;
-            widget.selectedGameIndex = index;
-           });
-        },
-
-        onTap: () {
-          setState(() {
-            widget.isSelectedGame = false;
-            widget.selectedGameIndex = -1;
-          });
-        },
-      ) : null,
+              //update the game data
+              widget.selectedGame =
+                  widget.selectedGame.copyWith(
+                      playerOID: player.playerID,
+                      playerOName: player.name,
+                  );
+              await DatabaseService.updateGame(widget.selectedGame);
+            }
+          : null,
+      ),
     );
+  }
+
+  ///
+  /// build & display the player tile
+  Widget buildGameTile(Game game, int index) => Container(
+    color: widget.selectedGameID.isNotEmpty && widget.selectedGameIndex == index
+        ? Colors.white70
+        : Colors.transparent,
+    // child: widget.currentPlayer.playerID == game.playerX ||
+    //     widget.currentPlayer.playerID == game.playerO ? ListTile(
+    child: ListTile(
+      title: Text(
+        widget.ticTacToe.getGameTile(game, widget.currentPlayer.name,
+            widget.isSelectedOpponent ? widget.selectedOpponent.name : ""),
+        style: const TextStyle(
+          fontSize: 16.0,
+          decoration: TextDecoration.none,
+        ),
+      ),
+
+      //allow only current user to delete game
+      trailing: widget.currentPlayer.playerID == game.playerXID
+          ? IconButton(
+              icon: const Icon(Icons.delete),
+              color: Colors.redAccent,
+              onPressed: () {
+                String result = DatabaseService.deleteGame(game);
+              },
+            )
+          : null,
+
+      //select the game to work with
+      onLongPress: widget.currentPlayer.playerID == game.playerXID ||
+          widget.currentPlayer.playerID == game.playerOID
+          ? () async {
+              //if opponent is selected
+              if (widget.isSelectedOpponent &&
+                  widget.selectedOpponent.name !=
+                      widget.currentPlayer.name) {
+                widget.selectedGame = game.copyWith(
+                    playerOID: widget.selectedOpponent.playerID,
+                    playerOName: widget.selectedOpponent.name,
+                );
+                widget.selectedGameID = game.gameID;
+                await DatabaseService.updateGame(widget.selectedGame);
+              } else {
+                widget.selectedGame = game.copyWith();
+                widget.selectedGameID = game.gameID;
+                await DatabaseService.updateGame(widget.selectedGame);
+              }
+
+              setState(() {
+                widget.selectedGameID = game.gameID;
+                widget.selectedGameIndex = index;
+              });
+            }
+          : null,
+
+      //Reset the long tap changes
+      onTap: () {
+        setState(() {
+          widget.selectedGameID = "";
+          widget.selectedGameIndex = -1;
+        });
+      },
+    ),
+  );
+
+  ///
+  /// Show message (snakbar)
+  ///
+  void showMessage(String message, bool isError) {
+    Utils.showSnackBarMessage(context, message, isError);
+  }
+
+  ///
+  /// show dialog
+  ///
+  void showDialog(String title, String message, bool isError) {
+    Utils.buildShowDialog(context, title, message, isError);
+  }
+
+  ///
+  /// Navigate to the TicTacToe page
+  ///
+  void navigateToPage() {
+    Navigator.push(context,
+        MaterialPageRoute(
+            builder: (_) => TicTacToeHomePage(
+                  playerXName: widget.selectedGame.playerXName,
+                  playerOName: widget.selectedGame.playerOName,
+                  selectedGame: widget.selectedGame,
+                  currentPlayer: widget.currentPlayer,
+                ))
+      ).then((_) async {
+        // get callback after coming back from NextPage()
+        int totWins = widget.currentPlayer.totalWins;
+        int totLosses = widget.currentPlayer.totalLosses;
+
+        widget.selectedGame =
+            (await DatabaseService.findGame(widget.selectedGame.gameID))!;
+
+        print("CALLED BACK GAME FROM DB.... ${widget.selectedGame.toString()}");
+
+        if (widget.selectedGame.playerOID == widget.currentPlayer.playerID) {
+          widget.currentPlayer = widget.currentPlayer.copyWith(
+            totalWins: totWins + widget.selectedGame.playerOScore,
+            totalLosses: totLosses + widget.selectedGame.playerXScore,
+          );
+        } else {
+          widget.currentPlayer = widget.currentPlayer.copyWith(
+            totalWins: totWins + widget.selectedGame.playerXScore,
+            totalLosses: totLosses + widget.selectedGame.playerOScore,
+          );
+        }
+        print("CALLED BACK PLAYER.... ${widget.currentPlayer.toString()}");
+        DatabaseService.updatePlayer(widget.currentPlayer);
+      });
+  }
 }
 
 ///
 ///
 class _ScrollbarBehavior extends ScrollBehavior {
   @override
-  Widget buildScrollbar(BuildContext context, Widget child, ScrollableDetails details) {
+  Widget buildScrollbar(
+      BuildContext context, Widget child, ScrollableDetails details) {
     return Scrollbar(
-        controller: details.controller,
-        thickness: 6.0,
-        thumbVisibility: true,
-        trackVisibility: true,
-        child: child,);
+      controller: details.controller,
+      thickness: 6.0,
+      thumbVisibility: true,
+      trackVisibility: true,
+      child: child,
+    );
   }
 }
+

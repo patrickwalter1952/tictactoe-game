@@ -52,19 +52,9 @@ class _TicTacToeHomePageState extends State<TicTacToeHomePage> {
   @override
   void initState() {
     super.initState();
-    // print("TicTacToeHomePage initState GAME: ${widget.selectedGame.toString()}");
-    selectedBoardID = BoardID.BoardID_8X8.id;
+    print("TicTacToeHomePage initState GAME: ${widget.selectedGame.toString()}");
+    selectedBoardID = widget.selectedGame.selectedBoardID;
     displayElement = List.filled(nbrSquares, BLANK_VALUE, growable: true);
-
-    widget.selectedGame = widget.selectedGame.copyWith(
-      activePlayerID: widget.currentPlayer.playerID,
-      playerOScore: 0,
-      playerXScore: 0,
-      tappedIndex: -1,
-      gameStatus: GameStatus.ACTIVE.status,
-    );
-
-    DatabaseService.updateGame(widget.selectedGame);
 
     //Setup Realtime Database listener
     DatabaseService.subscribeToRealTimeUpdatesGames(
@@ -325,6 +315,8 @@ class _TicTacToeHomePageState extends State<TicTacToeHomePage> {
         widget.selectedGame = widget.selectedGame.copyWith(
           action: GameAction.NO_ACTION.action,
         );
+      } else if (widget.selectedGame.action == GameAction.NO_ACTION.action) {
+        return;
       } else {
         Utils.showSnackBarMessage(context,
             "RECEIVED FROM LISTENER: INVALID ACTION..."
@@ -333,9 +325,7 @@ class _TicTacToeHomePageState extends State<TicTacToeHomePage> {
       }
 
     } catch(e) {
-      Utils.showSnackBarMessage(context,
-          "RECEIVED SYSTEM ERROR: $e", true);
-      // print("ERROR:$e");
+      Utils.showSnackBarMessage(context, "RECEIVED SYSTEM ERROR: $e", true);
     }
   }
 
@@ -392,7 +382,7 @@ class _TicTacToeHomePageState extends State<TicTacToeHomePage> {
       );
 
     } else {
-      print("RECEIVED FROM LISTENER: UNKNOWN ACTION...[${gameAction.action}]");
+      // print("RECEIVED FROM LISTENER: UNKNOWN ACTION...[${gameAction.action}]");
       return;
     }
 

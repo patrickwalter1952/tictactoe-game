@@ -57,7 +57,7 @@ class Utils {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(title),
-        backgroundColor: isError ? Colors.redAccent : Colors.blueGrey,
+        backgroundColor: isError ? Colors.red.shade200 : Colors.blueGrey,
         content: Text(
           showText,
         ),

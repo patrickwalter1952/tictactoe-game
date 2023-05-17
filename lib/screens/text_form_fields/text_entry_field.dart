@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tictactoe_game/services/string_extensions.dart';
 
 class TextEntryField extends StatefulWidget {
-  TextEntryField({
+  TextEntryField({super.key,
     required this.fieldLabel,
     required this.onChanged,
     required this.editingController,
@@ -29,27 +29,24 @@ class _TextEntryFieldState extends State<TextEntryField> {
   @override
   void initState() {
     super.initState();
-    _errorText = widget.errorText;
   }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // initialValue:  widget.initialValue.toString(),
       controller: widget.editingController,
       onChanged: (value) {
         setState(() {
           if (value.trim().isEmpty) {
             _errorText = widget.errorText;
           } else {
-            _errorText = null;
+            _errorText = "";
             widget.onChanged(value);
           }
         });
       },
 
       validator: (value) {
-        print("VALUE: [${value.toString()}]");
         return _errorText;
       },
 

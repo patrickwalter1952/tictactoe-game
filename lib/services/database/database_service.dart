@@ -24,12 +24,6 @@ class DatabaseService {
           map((snapshot) => snapshot.docs.map((doc) =>
           Player.fromMap(doc.data())).toList());
 
-  static Stream<List<Player>> getAllPlayersWaiting() =>
-      FirebaseFirestore.instance.collection("players").
-          where("playerStatus", isEqualTo: "waiting").snapshots().
-          map((snapshot) => snapshot.docs.map((doc) =>
-              Player.fromMap(doc.data())).toList());
-
   static void printAllPlayers() {
     FirebaseFirestore db = FirebaseFirestore.instance;
     db.collection("players").get().then(
@@ -43,10 +37,9 @@ class DatabaseService {
     );
   }
 
-
   ///
   /// CREATE PLAYER
-  static Player? createPlayer(Player player)  {
+  static Future<Player?> createPlayer(Player player) async {
     try {
       //generate auto-generated ID
       final docPlayer = playersCollection.doc(player.playerID);
@@ -64,23 +57,33 @@ class DatabaseService {
   /// CHECK PLAYER EXIST .. If not then insert
   static Future<Player?> insertIfPlayerNotExist(Player player) async {
     bool foundPlayer = false;
+
     try {
       final docRef = await playersCollection.where("name", isEqualTo: player.name).get().
-      then((snapshot) {
+      then((snapshot) async {
         foundPlayer = false;
         for (var element in snapshot.docs) {
           foundPlayer = true;
-          player = Player.fromMap(element.data() as Map<String, dynamic>);
+          Player dbPlayer = Player.fromMap(element.data() as Map<String, dynamic>);
+
           print("insertIfPlayerNotExist  FOUND ${element.data()}");
+
+          if (player.phoneNumber != dbPlayer.phoneNumber) {
+            player = dbPlayer.copyWith(
+                phoneNumber: player.phoneNumber);
+            updatePlayer(player);
+          } else {
+            player = dbPlayer.copyWith();
+          }
         }
         if (!foundPlayer) {
-          player = createPlayer(player)!;
+          await createPlayer(player);
           print("insertIfPlayerNotExist  NOT FOUND - CREATED - ${player.toString()}");
         }
         return player;
       });
     } catch (e) {
-      print("ERROR - Check for Player existence.... $e");
+      print("ERROR - Check for Player existence - insertIfPlayerNotExist.... $e");
     }
     return player;
   }
@@ -102,7 +105,7 @@ class DatabaseService {
       print("doesPlayerExist $playerName OUT: $foundPlayer");
       return foundPlayer;
     } catch (e) {
-      print("ERROR - Check for Player existence.... $e");
+      print("ERROR - Check for Player existence - doesPlayerExist.... $e");
       return foundPlayer;
     }
   }
@@ -132,7 +135,7 @@ class DatabaseService {
 
       return player;
     } catch (e) {
-      print("ERROR - Check for Player existence.... $e");
+      print("ERROR - Check for Player existence - FindPlayer.... $e");
       return null;
     }
   }

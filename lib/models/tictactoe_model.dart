@@ -27,13 +27,12 @@ class TicTacToe {
   /// get Game display list tile title
   String getGameTile(Game game, String currentPlayer, String opponentPlayer) {
     try {
-      Player? playerX = getPlayer(game.playerX);
-      Player? playerO = getPlayer(game.playerO);
+      Player? playerX = getPlayer(game.playerXID);
+      Player? playerO = getPlayer(game.playerOID);
       String? nameX = playerX == null ? currentPlayer : playerX.name;
       String? nameO = playerO == null ? opponentPlayer : playerO.name;
 
       return "date: ${game.date} \nplayerX: $nameX\nplayerO: $nameO";
-      // return "date: ${game.date} \nplayerX: $nameX\nplayerO: $nameO\nstatus: ${game.gameStatus}";
     } catch (e) {
       print("Error: Invalid Game .. $e");
     }
