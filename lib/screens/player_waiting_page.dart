@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:tictactoe_game/models/tictactoe_model.dart';
 import 'package:tictactoe_game/screens/tictactoe_home_page.dart';
@@ -262,31 +263,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
           ? Colors.white70
           : Colors.transparent,
       child: ListTile(
-        leading: IconButton(
-            icon: const Icon(Icons.phone_android),
-            color: Colors.black,
-            onPressed: () async {
-              TextEditingController phoneController =
-                  TextEditingController(text: player.phoneNumber);
-              String result = await Utils.buildShowPhoneTextFieldDialog(
-                  context,
-                  "Enter Phone Number to Text ${player.name}",
-                  "Invalid Phone Number",
-                  phoneController.text.isValidPhoneNumber,
-                  phoneController);
-
-              if (result.toUpperCase() == "OK") {
-                String msg = "Tic Tac Toe Player:\n "
-                    "${widget.currentPlayer.name} has challenged you with a game."
-                    " After signing in, join game between \n"
-                    "${widget.currentPlayer.name} and  ${player.name}";
-                try {
-                  Utils.send_SMS2(msg, [phoneController.text]);
-                } catch (e) {
-                  showMessage("SEND PHONE TEXT MESSAGE ERROR: $e", true);
-                }
-              }
-            }),
+        leading: buildTextMessageIconButton(player),
 
         title: Text(
           player.tilePlayerInfo(),
@@ -331,6 +308,44 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
           : null,
       ),
     );
+  }
+
+  IconButton buildTextMessageIconButton(Player player) {
+    return IconButton(
+        icon: const Icon(Icons.phone_android),
+        color: Colors.black,
+        onPressed: () async {
+          TextEditingController phoneController =
+          TextEditingController(text: player.phoneNumber);
+          String result = await Utils.buildShowPhoneTextFieldDialog(
+              context,
+              "Enter Phone Number to Text ${player.name}",
+              "Invalid Phone Number",
+              phoneController.text.isValidPhoneNumber,
+              phoneController);
+
+          if (result.toUpperCase() == "OK") {
+            String msg = "Tic Tac Toe Player:\n "
+                "${widget.currentPlayer.name} has challenged you with a game."
+                " After signing in, join game between \n"
+                "${widget.currentPlayer.name} and  ${player.name}";
+            try {
+              Utils.send_SMS2(msg, [phoneController.text]);
+            } catch (e) {
+              showMessage("SEND PHONE TEXT MESSAGE ERROR: $e", true);
+            }
+          }
+        });
+  }
+
+  IconButton buildCopyTextClipboardIconButton(Player player) {
+    return IconButton(
+      icon: const Icon(Icons.phone_android),
+      color: Colors.black,
+      onPressed: () async {
+        Utils.copyChallengeRequestToClipboard(context,
+            widget.currentPlayer, player);
+      });
   }
 
   ///

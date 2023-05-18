@@ -14,8 +14,6 @@ final navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  // final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
-
   static const String title = "";
 
   // This widget is the root of your application.
@@ -30,7 +28,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
 
       home: HomePage(),
-      //home: TicTacToeHomePage(),
      );
   }
 

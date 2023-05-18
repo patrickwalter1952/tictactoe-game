@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
@@ -273,6 +273,25 @@ class Utils {
 
     await FlutterEmailSender.send(email);
   }
+
+  ///
+  /// Copy challenge to Clipboard
+  static void copyChallengeRequestToClipboard(BuildContext context,
+      Player playerFrom, Player playerTo) async {
+    String msg = "Tic Tac Toe Player:\n "
+        "${playerFrom.name} has challenged you with a game."
+        " After signing in, join game between \n"
+        "${playerFrom.name} and  ${playerTo.name}";
+    try {
+      await Clipboard.setData(ClipboardData(text: msg));
+      await buildShowDialog(context, "Message Copied to Clipboard", msg, false);
+      ClipboardData? pasteData = await Clipboard.getData("text/plain");
+      print("PASTED DATA: ${pasteData?.text}");
+    } catch (e) {
+      await buildShowDialog(context, "Unable to Copy Message to Clipboard", msg, true);
+    }
+  }
+
 
   // static void createAndSendTextMessage(Game game, Player playerFrom, Player playerTo) async {
   static void createAndSendTextMessage(Player playerFrom, Player playerTo) async {
