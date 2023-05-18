@@ -24,7 +24,7 @@ class _SignInPageState extends State<SignInPage> {
 
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  final phoneNumberController = TextEditingController();
+  // final phoneNumberController = TextEditingController();
 
   TicTacToe ticTacToe = TicTacToe(
     games: [],
@@ -36,7 +36,7 @@ class _SignInPageState extends State<SignInPage> {
   void dispose() {
     super.dispose();
     nameController.dispose();
-    phoneNumberController.dispose();
+    // phoneNumberController.dispose();
   }
 
   @override
@@ -90,16 +90,16 @@ class _SignInPageState extends State<SignInPage> {
               errorText: "Field must be valued",
             ),
 
-            PhoneNumberField(
-              fieldLabel: "Mobile Phone Number",
-              hintText: "",
-              onChanged: (value) {
-                // print("Phone Number value = $value");
-              },
-              editingController: phoneNumberController,
-              errorText: "Enter a valid Phone Number.",
-
-            ),
+            // PhoneNumberField(
+            //   fieldLabel: "Mobile Phone Number",
+            //   hintText: "",
+            //   onChanged: (value) {
+            //     // print("Phone Number value = $value");
+            //   },
+            //   editingController: phoneNumberController,
+            //   errorText: "Enter a valid Phone Number.",
+            //
+            // ),
 
             SizedBox(
               child: ElevatedButton(
@@ -160,23 +160,20 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<Player?> validateAndGetPlayer() async {
-    print("Validate: Name: ${nameController.text} "
-        "PHONE NUMBER: ${phoneNumberController.text}");
-
-    if (nameController.text.isEmpty) {
+   if (nameController.text.isEmpty) {
       Utils.showSnackBarMessage(context, "PLAYER Name must be valued", true);
       return null;
     }
 
-    if (phoneNumberController.text.isEmpty) {
-      Utils.showSnackBarMessage(context, "PLAYER Phone Number must be valued", true);
-      return null;
-    }
+    // if (phoneNumberController.text.isEmpty) {
+    //   Utils.showSnackBarMessage(context, "PLAYER Phone Number must be valued", true);
+    //   return null;
+    // }
 
     Player? player = Player(
         playerID: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: nameController.text,
-        phoneNumber: phoneNumberController.text);
+        name: nameController.text);
+        // phoneNumber: phoneNumberController.text);
 
     player = await DatabaseService.insertIfPlayerNotExist(player);
 
@@ -262,7 +259,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget buildPlayerTile(Player player, int index) {
     return ListTile(
       title: Text(
-        "${player.name} \n${player.phoneNumber}",
+        player.name, // \n${player.phoneNumber}",
         style: const TextStyle(
           fontSize: 18.0,
           decoration: TextDecoration.none,
@@ -273,7 +270,7 @@ class _SignInPageState extends State<SignInPage> {
       onTap: () {
         setState(() {
           nameController.text = player.name;
-          phoneNumberController.text = player.phoneNumber;
+          // phoneNumberController.text = player.phoneNumber;
         });
       },
     );

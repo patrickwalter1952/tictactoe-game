@@ -82,6 +82,7 @@ class Player {
   }
 
   String tilePlayerInfo() {
-    return "$name  \n$phoneNumber\nWins: $totalWins  Losses: $totalLosses";
+    // return "$name  \n$phoneNumber\nWins: $totalWins  Losses: $totalLosses";
+    return "$name\nWins: $totalWins  Losses: $totalLosses";
   }
 }

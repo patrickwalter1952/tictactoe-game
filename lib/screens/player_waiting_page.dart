@@ -263,7 +263,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
           ? Colors.white70
           : Colors.transparent,
       child: ListTile(
-        leading: buildTextMessageIconButton(player),
+        leading: buildCopyTextClipboardIconButton(player),
 
         title: Text(
           player.tilePlayerInfo(),

@@ -285,27 +285,27 @@ class Utils {
     try {
       await Clipboard.setData(ClipboardData(text: msg));
       await buildShowDialog(context, "Message Copied to Clipboard", msg, false);
-      ClipboardData? pasteData = await Clipboard.getData("text/plain");
-      print("PASTED DATA: ${pasteData?.text}");
+      // ClipboardData? pasteData = await Clipboard.getData("text/plain");
+      // print("PASTED DATA: ${pasteData?.text}");
     } catch (e) {
       await buildShowDialog(context, "Unable to Copy Message to Clipboard", msg, true);
     }
   }
 
 
-  // static void createAndSendTextMessage(Game game, Player playerFrom, Player playerTo) async {
-  static void createAndSendTextMessage(Player playerFrom, Player playerTo) async {
-    String msg = "Tic Tac Toe Player:\n "
-        "${playerFrom.name} has challenged you with a game."
-        " After signing in, join game between \n"
-        "${playerFrom.name} and  ${playerTo.name}";
-    try {
-      send_SMS2(msg, [playerTo.phoneNumber]);
-      // send_SMS2(msg, ["281-433-0248"]);
-    } catch (e) {
-      print("SEND MESSAGE ERROR: $e");
-    }
-  }
+  // // static void createAndSendTextMessage(Game game, Player playerFrom, Player playerTo) async {
+  // static void createAndSendTextMessage(Player playerFrom, Player playerTo) async {
+  //   String msg = "Tic Tac Toe Player:\n "
+  //       "${playerFrom.name} has challenged you with a game."
+  //       " After signing in, join game between \n"
+  //       "${playerFrom.name} and  ${playerTo.name}";
+  //   try {
+  //     send_SMS2(msg, [playerTo.phoneNumber]);
+  //     // send_SMS2(msg, ["281-433-0248"]);
+  //   } catch (e) {
+  //     print("SEND MESSAGE ERROR: $e");
+  //   }
+  // }
 
   ///
   /// send SMS Text messages
