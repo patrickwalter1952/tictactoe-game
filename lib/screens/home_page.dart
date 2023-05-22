@@ -1,17 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:tictactoe_game/models/player.dart';
-import 'package:tictactoe_game/screens/player_waiting_page.dart';
 import 'package:tictactoe_game/screens/signin_page.dart';
 import 'package:tictactoe_game/screens/single_user_home_page.dart';
-import 'package:tictactoe_game/screens/text_form_fields/email_field.dart';
-import 'package:tictactoe_game/screens/text_form_fields/phone_number_field.dart';
-import 'package:tictactoe_game/screens/text_form_fields/text_entry_field.dart';
 import 'package:tictactoe_game/screens/tictactoe_computer_home_page.dart';
-import 'package:tictactoe_game/services/database/database_service.dart';
-
-import '../main.dart';
-import '../services/utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
           children: <Widget> [
 
-            SizedBox(height: 60),
+            const SizedBox(height: 60),
 
             const Image(
               image: AssetImage('assets/images/TicTacToe.png'),
@@ -86,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               width: 300,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   backgroundColor: Colors.blue,
                   minimumSize: const Size.fromHeight(40),
                   shape: RoundedRectangleBorder(
@@ -117,7 +108,7 @@ class _HomePageState extends State<HomePage> {
               width: 300,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(4),
                   backgroundColor: Colors.blue,
                   minimumSize: const Size.fromHeight(40),
                   shape: RoundedRectangleBorder(
@@ -128,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () async {
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => SignInPage()));
+                      MaterialPageRoute(builder: (_) => const SignInPage()));
                 },
 
                 child: const Text(

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:tictactoe_game/models/tictactoe_model.dart';
 import 'package:tictactoe_game/screens/tictactoe_home_page.dart';
-import 'package:tictactoe_game/services/string_extensions.dart';
 
 import '../models/board.dart';
 import '../models/game.dart';
@@ -38,7 +35,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
   void initState() {
     super.initState();
 
-    print("CURRENT PLAYER: ${widget.currentPlayer.toString()}");
+    debugPrint("CURRENT PLAYER: ${widget.currentPlayer.toString()}");
 
   }
 
@@ -279,6 +276,13 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
                 color: Colors.redAccent,
                 onPressed: () {
                   String result = DatabaseService.deletePlayer(player);
+                  if (result.isNotEmpty) {
+                    showDialog("Delete Player Request Failed",
+                        "Unable to delete the requested player (${player.name}.\n"
+                        " $result",
+                        true);
+                    return;
+                  }
                 },
               )
             : null,
@@ -310,33 +314,33 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
     );
   }
 
-  IconButton buildTextMessageIconButton(Player player) {
-    return IconButton(
-        icon: const Icon(Icons.phone_android),
-        color: Colors.black,
-        onPressed: () async {
-          TextEditingController phoneController =
-          TextEditingController(text: player.phoneNumber);
-          String result = await Utils.buildShowPhoneTextFieldDialog(
-              context,
-              "Enter Phone Number to Text ${player.name}",
-              "Invalid Phone Number",
-              phoneController.text.isValidPhoneNumber,
-              phoneController);
-
-          if (result.toUpperCase() == "OK") {
-            String msg = "Tic Tac Toe Player:\n "
-                "${widget.currentPlayer.name} has challenged you with a game."
-                " After signing in, join game between \n"
-                "${widget.currentPlayer.name} and  ${player.name}";
-            try {
-              Utils.send_SMS2(msg, [phoneController.text]);
-            } catch (e) {
-              showMessage("SEND PHONE TEXT MESSAGE ERROR: $e", true);
-            }
-          }
-        });
-  }
+  // IconButton buildTextMessageIconButton(Player player) {
+  //   return IconButton(
+  //       icon: const Icon(Icons.phone_android),
+  //       color: Colors.black,
+  //       onPressed: () async {
+  //         TextEditingController phoneController =
+  //         TextEditingController(text: player.phoneNumber);
+  //         String result = await Utils.buildShowPhoneTextFieldDialog(
+  //             context,
+  //             "Enter Phone Number to Text ${player.name}",
+  //             "Invalid Phone Number",
+  //             phoneController.text.isValidPhoneNumber,
+  //             phoneController);
+  //
+  //         if (result.toUpperCase() == "OK") {
+  //           String msg = "Tic Tac Toe Player:\n "
+  //               "${widget.currentPlayer.name} has challenged you with a game."
+  //               " After signing in, join game between \n"
+  //               "${widget.currentPlayer.name} and  ${player.name}";
+  //           try {
+  //             Utils.send_SMS2(msg, [phoneController.text]);
+  //           } catch (e) {
+  //             showMessage("SEND PHONE TEXT MESSAGE ERROR: $e", true);
+  //           }
+  //         }
+  //       });
+  // }
 
   IconButton buildCopyTextClipboardIconButton(Player player) {
     return IconButton(
@@ -373,6 +377,13 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
               color: Colors.redAccent,
               onPressed: () {
                 String result = DatabaseService.deleteGame(game);
+                if (result.isNotEmpty) {
+                  showDialog("Delete Player Request Failed",
+                      "Unable to delete the requested player (${game.gameID}.\n"
+                      " $result",
+                      true);
+                  return;
+                }
               },
             )
           : null,
@@ -448,7 +459,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
         widget.selectedGame =
             (await DatabaseService.findGame(widget.selectedGame.gameID))!;
 
-        print("CALLED BACK GAME FROM DB.... ${widget.selectedGame.toString()}");
+        debugPrint("CALLED BACK GAME FROM DB.... ${widget.selectedGame.toString()}");
 
         if (widget.selectedGame.playerOID == widget.currentPlayer.playerID) {
           widget.currentPlayer = widget.currentPlayer.copyWith(
@@ -461,7 +472,7 @@ class _PlayerWaitingPageState extends State<PlayerWaitingPage> {
             totalLosses: totLosses + widget.selectedGame.playerOScore,
           );
         }
-        print("CALLED BACK PLAYER.... ${widget.currentPlayer.toString()}");
+        debugPrint("CALLED BACK PLAYER.... ${widget.currentPlayer.toString()}");
         DatabaseService.updatePlayer(widget.currentPlayer);
       });
   }

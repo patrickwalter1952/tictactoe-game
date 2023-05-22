@@ -4,24 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:tictactoe_game/services/database/database_service.dart';
 
 import '../models/board.dart';
-import '../models/game.dart';
-import '../models/player.dart';
 import '../services/utils.dart';
 
 class TicTacToeComputerHomePage extends StatefulWidget {
-  TicTacToeComputerHomePage();
+  TicTacToeComputerHomePage({super.key});
 
   String playerXName = "You";
   String playerOName = "Computer";
 
   @override
-  _TicTacToeComputerHomePageState createState() => _TicTacToeComputerHomePageState();
+  TicTacToeComputerHomePageState createState() => TicTacToeComputerHomePageState();
 }
 
-class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
-  static String XVALUE = 'X';
-  static String OVALUE = 'O';
-  static String BLANK_VALUE = '';
+class TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
+  static const String XVALUE = 'X';
+  static const String OVALUE = 'O';
+  static const String BLANK_VALUE = '';
 
   int nbrSquares = BoardID.BoardID_8X8.size;
   int nbrRows = BoardID.BoardID_8X8.rowsCols;
@@ -497,7 +495,8 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
   //   filledBoxes = 0;
   // }
 
-
+  ///
+  /// Create the computer move
   Future<void> createComputerMove() async {
     int posToWin = -1;
     int posToBlock = -1;
@@ -513,7 +512,6 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
       cntXPos = 0;
 
       for (int j = i; j < i + nbrColumns; j++) {
-        // print("CHK ROWS -- [$i][$j] == [${displayElement[j]}]");
         if (displayElement[j] == OVALUE) {
           cnt++;
         } else if (displayElement[j] == XVALUE) {
@@ -523,21 +521,17 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
         }
       }
 
-      // print("CHK ROWS --posToWin [$posToWin]  cnt [$cnt]  cntXPos [$cntXPos]");
       if (posToWin != -1 && cnt == nbrColumns - 1) {
-        // print("CHK ROWS -- [$i] ... TAPPED [$posToWin]");
         await _tapped(posToWin);
         return;
       }
 
       if (posToWin != -1 && cntXPos == nbrColumns - 1) {
         posToBlock = posToWin;
-        // print("CHK ROWS -- [$i] ... POS TO BLOCK [$posToBlock]");
       }
 
       if (posToWin != -1 && cntXPos > 0) {
         nextBestPos = posToWin;
-        // print("CHK ROWS -- [$i] ... NEXT BEST POS [$nextBestPos]");
       }
     }
 
@@ -548,7 +542,6 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
       cntXPos = 0;
 
       for (int j = i; j < nbrSquares; j = j + nbrRows) {
-        // print("CHK COLS -- [$i][$j] == [${displayElement[j]}]");
         if (displayElement[j] == OVALUE) {
           cnt++;
         } else if (displayElement[j] == XVALUE) {
@@ -558,22 +551,17 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
         }
       }
 
-      // print("CHK COLS --posToWin [$posToWin]  cnt [$cnt]  cntXPos [$cntXPos]");
-
       if (posToWin != -1 && cnt == nbrColumns - 1) {
-        // print("CHK COLS -- [$i] ... TAPPED [$posToWin]");
         _tapped(posToWin);
         return;
       }
 
       if (posToWin != -1 && cntXPos == nbrColumns - 1) {
         posToBlock = posToBlock == -1 ? posToWin : posToBlock;
-        // print("CHK COLS -- [$i] ... POS TO BLOCK [$posToBlock]");
       }
 
       if (posToWin != -1 && cntXPos > 0) {
-        nextBestPos = nextBestPos == -1 ? posToWin : nextBestPos;;
-        // print("CHK COLS -- [$i] ... NEXT BEST POS [$nextBestPos]");
+        nextBestPos = nextBestPos == -1 ? posToWin : nextBestPos;
       }
     }
 
@@ -584,7 +572,6 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
     cntXPos = 0;
 
     for (int j = 0; j < nbrSquares; j = j + diagCnt) {
-      // print("CHK DIAG LRTB -- [$j] == [${displayElement[j]}]");
       if (displayElement[j] == OVALUE) {
         cnt++;
       } else if (displayElement[j] == XVALUE) {
@@ -594,22 +581,17 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
       }
     }
 
-    print("CHK DIAG --posToWin [$posToWin]  cnt [$cnt]  cntXPos [$cntXPos]");
-
     if (posToWin != -1 && cnt == nbrColumns - 1) {
-      // print("CHK DIAG  LRTB --  TAPPED [$posToWin]");
       _tapped(posToWin);
       return;
     }
 
     if (posToWin != -1 && cntXPos == nbrColumns - 1) {
       posToBlock = posToBlock == -1 ? posToWin : posToBlock;
-      // print("CHK DIAG --.. POS TO BLOCK [$posToBlock]");
     }
 
     if (posToWin != -1 && cntXPos > 0) {
       nextBestPos = nextBestPos == -1 ? posToWin : nextBestPos;;
-      // print("CHK DIAG LRTB -- .. NEXT BEST POS [$nextBestPos]");
     }
 
     diagCnt = nbrRows - 1;
@@ -618,7 +600,6 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
     cntXPos = 0;
 
     for (int j = diagCnt; j < nbrSquares - nbrColumns + 1; j = j + diagCnt) {
-      // print("CHK DIAG RLTB -- [$j] == [${displayElement[j]}]");
       if (displayElement[j] == OVALUE) {
         cnt++;
       } else if (displayElement[j] == XVALUE) {
@@ -628,22 +609,17 @@ class _TicTacToeComputerHomePageState extends State<TicTacToeComputerHomePage> {
       }
     }
 
-    // print("CHK DIAG RLTB --posToWin [$posToWin]  cnt [$cnt]  cntXPos [$cntXPos]");
-
     if (posToWin != -1 && cnt == nbrColumns - 1) {
-      // print("CHK DIAG  RLTB --  TAPPED [$posToWin]");
       _tapped(posToWin);
       return;
     }
 
     if (posToWin != -1 && cntXPos == nbrColumns - 1) {
       posToBlock = posToBlock == -1 ? posToWin : posToBlock;
-      // print("CHK DIAG --.. POS TO BLOCK [$posToBlock]");
     }
 
     if (posToWin != -1 && cntXPos > 0) {
-      nextBestPos = nextBestPos == -1 ? posToWin : nextBestPos;
-      // print("CHK DIAG -- .. NEXT BEST POS [$nextBestPos]");
+      nextBestPos = nextBestPos == -1 ? posToWin : nextBestPos;;
     }
 
     if (posToBlock > -1 || nextBestPos > -1) {

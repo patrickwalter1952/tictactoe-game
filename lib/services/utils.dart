@@ -1,14 +1,11 @@
 
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
-import 'package:flutter_sms/flutter_sms.dart';
+// import 'package:flutter_email_sender/flutter_email_sender.dart';
+// import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:tictactoe_game/services/string_extensions.dart';
 
-import '../models/game.dart';
 import '../models/player.dart';
 
 
@@ -114,8 +111,8 @@ class Utils {
                   Navigator.pop(context, 'OK');
                   return;
                 }
-                var result = buildShowDialog(
-                    context, "Invalid Email", "The email: ${textFieldController.text} is invalid", true);
+                buildShowDialog(context, "Invalid Email",
+                    "The email: ${textFieldController.text} is invalid", true);
 
               }
           ),
@@ -175,7 +172,7 @@ class Utils {
                   Navigator.pop(context, 'OK');
                   return;
                 }
-                var result = buildShowDialog(
+                buildShowDialog(
                     context,
                     errorTitle,
                     "The value ${textFieldController.text} is invalid",
@@ -251,28 +248,28 @@ class Utils {
     );
   }
 
-  ///
-  /// send data as an email
-  ///
-  static sendEmail(
-      BuildContext context,
-      String emailTo,
-      String emailSubject,
-      String emailBody
-      // String emailCc,
-      // String attachments
-      )  async {
-
-    final Email email = Email(
-      subject: emailSubject,
-      recipients: [emailTo],
-      body: emailBody,
-      // cc: [emailCc],
-      // attachmentPaths: [attachments],
-    );
-
-    await FlutterEmailSender.send(email);
-  }
+  // ///
+  // /// send data as an email
+  // ///
+  // static sendEmail(
+  //     BuildContext context,
+  //     String emailTo,
+  //     String emailSubject,
+  //     String emailBody
+  //     // String emailCc,
+  //     // String attachments
+  //     )  async {
+  //
+  //   final Email email = Email(
+  //     subject: emailSubject,
+  //     recipients: [emailTo],
+  //     body: emailBody,
+  //     // cc: [emailCc],
+  //     // attachmentPaths: [attachments],
+  //   );
+  //
+  //   await FlutterEmailSender.send(email);
+  // }
 
   ///
   /// Copy challenge to Clipboard
@@ -307,31 +304,31 @@ class Utils {
   //   }
   // }
 
-  ///
-  /// send SMS Text messages
-  ///
-  static void send_SMS(String msg, List<String> list_receipents) async {
-    String send_result = await sendSMS(message: msg, recipients: list_receipents)
-        .catchError((err) {
-      print("SEND SMS MESSAGE ERROR: $err");
-    });
-
-    print(send_result);
-
-  }
-
-  ///
-  /// send SMS Text messages
-  ///
-  static void send_SMS2(String msg, List<String> list_receipents) async {
-    launchSmsMulti(message: msg, numbers: list_receipents);
-    // String send_result = await sendSMS(message: msg, recipients: list_receipents)
-    //     .catchError((err) {
-    //   print("SEND SMS MESSAGE ERROR: $err");
-    // });
-
-    // print(send_result);
-
-  }
+  // ///
+  // /// send SMS Text messages
+  // ///
+  // static void send_SMS(String msg, List<String> list_receipents) async {
+  //   String send_result = await sendSMS(message: msg, recipients: list_receipents)
+  //       .catchError((err) {
+  //     print("SEND SMS MESSAGE ERROR: $err");
+  //   });
+  //
+  //   print(send_result);
+  //
+  // }
+  //
+  // ///
+  // /// send SMS Text messages
+  // ///
+  // static void send_SMS2(String msg, List<String> list_receipents) async {
+  //   launchSmsMulti(message: msg, numbers: list_receipents);
+  //   // String send_result = await sendSMS(message: msg, recipients: list_receipents)
+  //   //     .catchError((err) {
+  //   //   print("SEND SMS MESSAGE ERROR: $err");
+  //   // });
+  //
+  //   // print(send_result);
+  //
+  // }
 
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tictactoe_game/services/string_extensions.dart';
 
 class EmailField extends StatefulWidget {
-  EmailField({super.key,
+  const EmailField({super.key,
     required this.fieldLabel,
     required this.onChanged,
     required this.editingController,
@@ -43,7 +43,7 @@ class _EmailFieldState extends State<EmailField> {
 
       onChanged: (value) {
         setState(() {
-          if (!value!.isValidEmail()) {
+          if (!value.isValidEmail()) {
             _errorText = widget.errorText;
           } else {
             _errorText = null;

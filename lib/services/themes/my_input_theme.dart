@@ -22,7 +22,7 @@ class MyInputTheme {
   }
 
   InputDecorationTheme theme() => InputDecorationTheme(
-    contentPadding: EdgeInsets.all(16.0),
+    contentPadding: const EdgeInsets.all(16.0),
     //isDense seems to do nothing if you pass padding in
     // isDense: true,
 
@@ -32,7 +32,7 @@ class MyInputTheme {
     //this can be useful for putting TextFields in a row.
     //However, it might be more desirable to wrap with a Flexible
     //to make them grow to the available width.
-    constraints: BoxConstraints(maxHeight: 150),
+    constraints: const BoxConstraints(maxHeight: 150),
 
     /// Borders
     // Enable and not showing error

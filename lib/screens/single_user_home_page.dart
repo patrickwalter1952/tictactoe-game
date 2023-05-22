@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../models/board.dart';
-import '../services/utils.dart';
 
 class SingleUserHomePage extends StatefulWidget {
   @override

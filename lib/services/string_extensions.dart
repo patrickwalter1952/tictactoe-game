@@ -12,9 +12,9 @@ extension StringExtensions on String {
             lastIndexOf("@") < length - 1 && lastIndexOf("@") > 0) ? true : false;
   }
 
-  bool isWhitespace() => this.trim().isEmpty;
+  bool isWhitespace() => trim().isEmpty;
 
-  bool containsWhitespace() => this.contains(' ');
+  bool containsWhitespace() => contains(' ');
 
   bool isValidDouble() => double.tryParse(this) != null;
 
@@ -78,7 +78,7 @@ extension StringExtensions on String {
   /// XXX-XXX-XXXX :  Phone Number with dash separator.
   ///
   bool isValidPhoneNumber() {
-    if (this!.isEmpty) {
+    if (isEmpty) {
       return false;
     }
     RegExp regex =

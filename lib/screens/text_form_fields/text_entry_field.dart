@@ -1,10 +1,9 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:tictactoe_game/services/string_extensions.dart';
 
 class TextEntryField extends StatefulWidget {
-  TextEntryField({super.key,
+  const TextEntryField({super.key,
     required this.fieldLabel,
     required this.onChanged,
     required this.editingController,

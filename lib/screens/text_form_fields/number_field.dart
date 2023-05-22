@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NumberField extends StatefulWidget {
-  NumberField({super.key,
+  const NumberField({super.key,
     required this.fieldLabel,
     required this.fieldType,
     this.initialValue = 0,
@@ -32,6 +32,7 @@ class NumberField extends StatefulWidget {
 class _NumberFieldState extends State<NumberField> {
   String? _errorText;
 
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
       // initialValue:  widget.initialValue.toString(),
